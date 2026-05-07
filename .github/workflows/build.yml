@@ -25,13 +25,17 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build --stacktrace
 
-      - name: Upload Mod JAR
+      # Copy the JAR to a clean folder so we can upload it nicely
+      - name: Prepare Artifact
+        run: |
+          mkdir -p artifact
+          cp Fabric/build/libs/*1.21.1*.jar artifact/ || cp **/build/libs/*.jar artifact/
+          ls -la artifact/
+
+      - name: Upload Clean JAR
         uses: actions/upload-artifact@v4
         with:
-          name: Voxy-WorldGen-1.21.1
-          path: |
-            Fabric/build/libs/*.jar
-            **/build/libs/*.jar
-            !**/build/libs/*-sources.jar
-            !**/build/libs/*-dev.jar
+          name: Voxy-WorldGen-Fabric-1.21.1
+          path: artifact/
           if-no-files-found: warn
+          retention-days: 30
